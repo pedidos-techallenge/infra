@@ -3,7 +3,7 @@ name: Deploy S3 with Terraform
 on:
   push:
     branches:
-      - main  # Defina o branch que disparará o workflow
+      - main
 
 jobs:
   terraform:
