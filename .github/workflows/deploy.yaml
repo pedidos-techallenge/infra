@@ -40,14 +40,14 @@ jobs:
         working-directory: bucket
         run: terraform apply -auto-approve
 
-    - name: Initialize Terraform for Network
-      working-directory: ./network
-      run: terraform init
+      - name: Initialize Terraform for Network
+        working-directory: ./network
+        run: terraform init
 
-    - name: Plan Terraform changes for Network
-      working-directory: ./network
-      run: terraform plan -out=tfplan
+      - name: Plan Terraform changes for Network
+        working-directory: ./network
+        run: terraform plan -out=tfplan
 
-    - name: Apply Terraform changes for Network
-      working-directory: ./network
-      run: terraform apply -input=false tfplan
+      - name: Apply Terraform changes for Network
+        working-directory: ./network
+        run: terraform apply -input=false tfplan
