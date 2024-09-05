@@ -31,3 +31,34 @@ resource "aws_subnet" "public" {
     Name = "subnet-public"
   }
 }
+
+# Internet Gateway
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "igw"
+  }
+}
+
+# Route Table for public subnet
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "public-route-table"
+  }
+}
+
+# Route for IGW
+resource "aws_route" "public_route" {
+  route_table_id         = aws_route_table.public_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw.id
+}
+
+# Link the public subnet to route table
+resource "aws_route_table_association" "public_rt_association" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public_rt.id
+}
