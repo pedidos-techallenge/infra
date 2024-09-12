@@ -64,30 +64,30 @@ resource "aws_route_table_association" "public_rt_association" {
 }
 
 # Lambda Function
-resource "aws_lambda_function" "hello_world" {
-  function_name = "hello_world_lambda"
-  role          = aws_iam_role.lambda_exec.arn
-  handler       = "index.js"
-  runtime       = "nodejs18.x"
-  s3_bucket     = "bucket-tfstates-postech-fiap-6soat"
-  s3_key        = "lambda.zip"
+# resource "aws_lambda_function" "hello_world" {
+#   function_name = "hello_world_lambda"
+#   role          = aws_iam_role.lambda_exec.arn
+#   handler       = "index.js"
+#   runtime       = "nodejs18.x"
+#   s3_bucket     = "bucket-tfstates-postech-fiap-6soat"
+#   s3_key        = "lambda.zip"
 
-  # Configure a VPC connection
-  vpc_config {
-    subnet_ids         = [aws_subnet.private.id]
-    security_group_ids = [aws_security_group.lambda_sg.id]
-  }
+#   # Configure a VPC connection
+#   vpc_config {
+#     subnet_ids         = [aws_subnet.private.id]
+#     security_group_ids = [aws_security_group.lambda_sg.id]
+#   }
 
-  environment {
-    variables = {
-      EXAMPLE_VAR = "HelloWorld"
-    }
-  }
+#   environment {
+#     variables = {
+#       EXAMPLE_VAR = "HelloWorld"
+#     }
+#   }
 
-  tags = {
-    Name = "hello-world-lambda"
-  }
-}
+#   tags = {
+#     Name = "hello-world-lambda"
+#   }
+# }
 
 # IAM Role for Lambda Execution
 # resource "aws_iam_role" "lambda_exec" {

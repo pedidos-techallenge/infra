@@ -23,10 +23,6 @@ resource "aws_iam_policy" "s3_put_policy" {
   name        = "S3PutObjectPolicy"
   description = "Permission to send objects to S3."
 
-  lifecycle {
-    prevent_destroy = true
-  }
-
   policy = jsonencode({
     "Version": "2012-10-17",
     "Statement": [
@@ -44,4 +40,7 @@ resource "aws_iam_policy" "s3_put_policy" {
       }
     ]
   })
+    lifecycle {
+    prevent_destroy = true
+  }
 }
