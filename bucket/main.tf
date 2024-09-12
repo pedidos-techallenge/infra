@@ -12,11 +12,20 @@ resource "aws_s3_bucket" "terraform_state" {
   tags = {
     Name = "bucket-tfstates"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
 }
 
 resource "aws_iam_policy" "s3_put_policy" {
   name        = "S3PutObjectPolicy"
   description = "Permission to send objects to S3."
+
+  lifecycle {
+    prevent_destroy = true
+  }
 
   policy = jsonencode({
     "Version": "2012-10-17",
