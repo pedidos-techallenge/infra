@@ -18,7 +18,7 @@ resource "aws_iam_policy" "s3_put_policy" {
   name        = "S3PutObjectPolicy"
   description = "Permission to send objects to S3."
 
-  policy = jsonencode({
+  policy = {
     "Version" = "2024-09-11",
     "Statement" = [
       {
@@ -34,5 +34,5 @@ resource "aws_iam_policy" "s3_put_policy" {
         ]
       }
     ]
-  })
+  }
 }
