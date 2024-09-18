@@ -63,98 +63,14 @@ resource "aws_route_table_association" "public_rt_association" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-# Lambda Function
-# resource "aws_lambda_function" "hello_world" {
-#   function_name = "hello_world_lambda"
-#   role          = aws_iam_role.lambda_exec.arn
-#   handler       = "index.js"
-#   runtime       = "nodejs18.x"
-#   s3_bucket     = "bucket-tfstates-postech-fiap-6soat"
-#   s3_key        = "lambda.zip"
+# API Gateway
+resource "aws_api_gateway_rest_api" "api" {
+  name = "HelloWorldAPI"
+}
 
-#   # Configure a VPC connection
-#   vpc_config {
-#     subnet_ids         = [aws_subnet.private.id]
-#     security_group_ids = [aws_security_group.lambda_sg.id]
-#   }
-
-#   environment {
-#     variables = {
-#       EXAMPLE_VAR = "HelloWorld"
-#     }
-#   }
-
-#   tags = {
-#     Name = "hello-world-lambda"
-#   }
-# }
-
-# IAM Role for Lambda Execution
-# resource "aws_iam_role" "lambda_exec" {
-#   name = "lambda_exec_role"
-
-#   assume_role_policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Action    = "sts:AssumeRole"
-#         Effect    = "Allow"
-#         Principal = {
-#           Service = "lambda.amazonaws.com"
-#         }
-#       }
-#     ]
-#   })
-# }
-
-# # Attach Basic Lambda Permissions to the IAM Role
-# resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
-#   role       = aws_iam_role.lambda_exec.name
-#   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-# }
-
-# # API Gateway
-# resource "aws_api_gateway_rest_api" "api" {
-#   name = "HelloWorldAPI"
-# }
-
-# # API Gateway Resource
-# resource "aws_api_gateway_resource" "hello_resource" {
-#   rest_api_id = aws_api_gateway_rest_api.api.id
-#   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-#   path_part   = "hello"
-# }
-
-# # API Gateway Method
-# resource "aws_api_gateway_method" "get_method" {
-#   rest_api_id   = aws_api_gateway_rest_api.api.id
-#   resource_id   = aws_api_gateway_resource.hello_resource.id
-#   http_method   = "GET"
-#   authorization = "NONE"
-# }
-
-# # API Gateway Integration with Lambda
-# resource "aws_api_gateway_integration" "lambda_integration" {
-#   rest_api_id             = aws_api_gateway_rest_api.api.id
-#   resource_id             = aws_api_gateway_resource.hello_resource.id
-#   http_method             = aws_api_gateway_method.get_method.http_method
-#   integration_http_method = "POST"
-#   type                    = "AWS_PROXY"
-#   uri                     = aws_lambda_function.hello_world.invoke_arn
-# }
-
-# # Deploy API Gateway
-# resource "aws_api_gateway_deployment" "api_deployment" {
-#   depends_on = [aws_api_gateway_integration.lambda_integration]
-#   rest_api_id = aws_api_gateway_rest_api.api.id
-#   stage_name  = "prod"
-# }
-
-# # Lambda Permission for API Gateway Invocation
-# resource "aws_lambda_permission" "api_gateway_permission" {
-#   statement_id  = "AllowAPIGatewayInvoke"
-#   action        = "lambda:InvokeFunction"
-#   function_name = aws_lambda_function.hello_world.function_name
-#   principal     = "apigateway.amazonaws.com"
-#   source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/*"
-# }
+# API Gateway Resource
+resource "aws_api_gateway_resource" "hello_resource" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  path_part   = "hello"
+}
