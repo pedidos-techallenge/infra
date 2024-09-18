@@ -4,6 +4,7 @@ provider "aws" {
 
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "bucket-tfstates-postech-fiap-6soat"
+  role   = "arn:aws:iam::195169078299:role/LabRole"
 
   versioning {
     enabled = true
