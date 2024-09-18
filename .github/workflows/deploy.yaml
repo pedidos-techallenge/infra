@@ -39,6 +39,7 @@ jobs:
       #     AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
       #   working-directory: bucket
       #   run: terraform apply -auto-approve
+      #
 
       - name: Initialize Terraform for Network
         env:
