@@ -10,14 +10,12 @@ terraform {
 resource "aws_cognito_user_pool" "pedidos_cognito" {
   name = "pedidos_user_pool"
 
-  policies {
-    password_policy {
-      minimum_length    = 8
-      require_lowercase = true
-      require_numbers   = true
-      require_symbols   = false
-      require_uppercase = false
-    }
+  password_policy {
+    minimum_length    = 8
+    require_lowercase = true
+    require_numbers   = true
+    require_symbols   = false
+    require_uppercase = false
   }
 
   # Mandatory Attributes Configuration
