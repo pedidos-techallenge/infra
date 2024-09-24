@@ -6,6 +6,18 @@ terraform {
   backend "s3" {}
 }
 
+variable "COGNITO_CLIENT_ID" {
+  type = string
+}
+
+variable "COGNITO_DOMAIN" {
+  type = string
+}
+
+variable "COGNITO_REDIRECT_URI" {
+  type = string
+}
+
 # Create Cognito User Pool
 resource "aws_cognito_user_pool" "pedidos_cognito" {
   name = "pedidos_user_pool"
@@ -48,6 +60,11 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
   }
+}
+
+resource "aws_cognito_user_pool_domain" "cognito_domain" {
+  domain       = "meu-nome-unico"
+  user_pool_id = aws_cognito_user_pool.pedidos_cognito.id
 }
 
 # Create User Pool Client
