@@ -6,18 +6,6 @@ terraform {
   backend "s3" {}
 }
 
-variable "COGNITO_CLIENT_ID" {
-  type = string
-}
-
-variable "COGNITO_DOMAIN" {
-  type = string
-}
-
-variable "COGNITO_REDIRECT_URI" {
-  type = string
-}
-
 # Create Cognito User Pool
 resource "aws_cognito_user_pool" "pedidos_cognito" {
   name = "pedidos_user_pool"
