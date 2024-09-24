@@ -51,7 +51,7 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
 }
 
 resource "aws_cognito_user_pool_domain" "cognito_domain" {
-  domain       = "meu-nome-unico"
+  domain       = "pos-tech-challenge"
   user_pool_id = aws_cognito_user_pool.pedidos_cognito.id
 }
 
