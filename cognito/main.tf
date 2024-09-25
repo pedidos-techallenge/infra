@@ -10,6 +10,8 @@ terraform {
 resource "aws_cognito_user_pool" "pedidos_cognito" {
   name = "pedidos_user_pool"
 
+  alias_attributes = ["email", "phone_number"]
+
   password_policy {
     minimum_length    = 8
     require_lowercase = true
@@ -29,7 +31,6 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
     }
   }
 
-  alias_attributes = ["email", "phone_number", "cpf"]
   auto_verified_attributes = ["email"]
 
   verification_message_template {
