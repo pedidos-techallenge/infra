@@ -18,33 +18,20 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
     require_uppercase = false
   }
 
-  # Mandatory Attributes Configuration
   schema {
     name     = "cpf"
     attribute_data_type = "String"
     mutable  = false
-    required = false
+    required = true
     string_attribute_constraints {
       min_length = 11
       max_length = 11
     }
   }
 
-  schema {
-    name     = "email"
-    attribute_data_type = "String"
-    mutable  = true
-    required = false
-    string_attribute_constraints {
-      min_length = 5
-      max_length = 256
-    }
-  }
-
-# Verification Email
+  alias_attributes = ["email", "phone_number", "cpf"]
   auto_verified_attributes = ["email"]
 
-# Mensagens de verificação e recuperação
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
   }
@@ -63,9 +50,9 @@ resource "aws_cognito_user_pool_client" "pedidos_user_pool_client" {
 
   # OAuth Configuration
   allowed_oauth_flows             = ["code", "implicit"]
-  allowed_oauth_scopes            = ["phone", "email", "openid", "profile", "aws.cognito.signin.user.admin"]
+  allowed_oauth_scopes            = ["cpf", "phone", "email", "openid", "profile", "aws.cognito.signin.user.admin"]
   allowed_oauth_flows_user_pool_client = true
-  callback_urls                   = ["https://pedidostechchallenge.com/index"]
+  callback_urls                   = ["https://github.com/queirozingrd"]
 
   # Additional Authentication Configurations
   # explicit_auth_flows = [
