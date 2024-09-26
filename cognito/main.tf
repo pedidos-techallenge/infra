@@ -6,6 +6,10 @@ terraform {
   backend "s3" {}
 }
 
+data "aws_lambda_function" "application_entry" {
+  function_name = "application_entry"
+}
+
 # Create Cognito User Pool
 resource "aws_cognito_user_pool" "pedidos_cognito" {
   name = "pedidos_user_pool"
@@ -28,10 +32,6 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
 
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
-  }
-
-  data "aws_lambda_function" "application_entry" {
-    function_name = "application_entry"
   }
 
   lambda_config {
