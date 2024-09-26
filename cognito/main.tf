@@ -29,6 +29,14 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
   }
+
+  data "aws_lambda_function" "application_entry" {
+    function_name = "application_entry"
+  }
+
+  lambda_config {
+    pre_authentication = aws_lambda_function.application_entry.arn
+  }
 }
 
 resource "aws_cognito_user_pool_domain" "cognito_domain" {
@@ -66,15 +74,4 @@ resource "aws_cognito_identity_pool_roles_attachment" "pedidos_identity_pool_rol
   roles = {
     authenticated = "arn:aws:iam::195169078299:role/LabRole"
   }
-}
-
-data "aws_lambda_function" "application_entry" {
-  function_name = "application_entry"
-}
-
-resource "aws_cognito_user_pool_trigger" "lambda_trigger" {
-  user_pool_id = aws_cognito_user_pool.pedidos_cognito.id
-  trigger_type = "PreAuthentication_Authentication"
-
-  lambda_function_arn = aws_lambda_function.application_entry.arn
 }
