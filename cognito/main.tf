@@ -20,15 +20,8 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
     require_uppercase = false
   }
 
-  schema {
-    name     = "cpf"
-    attribute_data_type = "String"
-    mutable  = false
-    required = false
-    string_attribute_constraints {
-      min_length = 11
-      max_length = 11
-    }
+  username_configuration {
+    case_sensitive = false
   }
 
   auto_verified_attributes = ["email"]
@@ -51,18 +44,9 @@ resource "aws_cognito_user_pool_client" "pedidos_user_pool_client" {
 
   # OAuth Configuration
   allowed_oauth_flows             = ["code", "implicit"]
-  allowed_oauth_scopes            = ["cpf", "phone", "email", "openid", "profile", "aws.cognito.signin.user.admin"]
+  allowed_oauth_scopes            = ["phone", "email", "openid", "profile", "aws.cognito.signin.user.admin"]
   allowed_oauth_flows_user_pool_client = true
   callback_urls                   = ["https://github.com/queirozingrd"]
-
-  # Additional Authentication Configurations
-  # explicit_auth_flows = [
-  #   "ALLOW_USER_PASSWORD_AUTH",
-  #   "ALLOW_REFRESH_TOKEN_AUTH",
-  #   "ALLOW_CUSTOM_AUTH",
-  #   "ALLOW_USER_SRP_AUTH",
-  #   "ALLOW_ADMIN_USER_PASSWORD_AUTH"
-  # ]
 }
 
 # Identity Pool
@@ -82,4 +66,15 @@ resource "aws_cognito_identity_pool_roles_attachment" "pedidos_identity_pool_rol
   roles = {
     authenticated = "arn:aws:iam::195169078299:role/LabRole"
   }
+}
+
+data "aws_lambda_function" "application_entry" {
+  function_name = "application_entry"
+}
+
+resource "aws_cognito_user_pool_trigger" "lambda_trigger" {
+  user_pool_id = aws_cognito_user_pool.pedidos_cognito.id
+  trigger_type = "PreAuthentication_Authentication"
+
+  lambda_function_arn = aws_lambda_function.application_entry.arn
 }
