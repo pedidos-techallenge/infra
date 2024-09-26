@@ -35,7 +35,7 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
   }
 
   lambda_config {
-    pre_authentication = data.aws_lambda_function.application_entry
+    pre_authentication = data.aws_lambda_function.application_entry.arn
   }
 }
 
