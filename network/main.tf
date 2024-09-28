@@ -15,20 +15,7 @@ resource "aws_vpc" "main" {
     Name = "techchallenge-vpc"
   }
 }
-
-resource "aws_subnet" "private" {
-  count      = 2
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.${count.index}.0/24"
-  map_public_ip_on_launch = false
-  availability_zone       = element(["us-east-1a", "us-east-1b"], count.index)
-
-  tags = {
-    Name = "subnet-private"
-  }
-}
-
-
+# Public Subnets - 10.0.0.0/24 and 10.0.1.0/24
 resource "aws_subnet" "public" {
   count      = 2
   vpc_id     = aws_vpc.main.id
@@ -38,6 +25,19 @@ resource "aws_subnet" "public" {
 
   tags = {
     Name = "subnet-public"
+  }
+}
+
+# Private Subnets - 10.0.2.0/24 and 10.0.3.0/24
+resource "aws_subnet" "private" {
+  count      = 2
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.${count.index + 2}.0/24"
+  map_public_ip_on_launch = false
+  availability_zone       = element(["us-east-1a", "us-east-1b"], count.index)
+
+  tags = {
+    Name = "subnet-private"
   }
 }
 
