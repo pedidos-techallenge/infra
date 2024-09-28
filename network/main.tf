@@ -3,7 +3,11 @@ provider "aws" {
 }
 
 terraform {
-  backend "s3" {}
+  backend "s3" {
+    bucket = "techchallangebucket"
+    key    = "infra.tfstate"
+    region = "us-east-1"
+  }
 }
 
 resource "aws_vpc" "main" {
