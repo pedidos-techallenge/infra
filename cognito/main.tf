@@ -55,6 +55,7 @@ resource "aws_cognito_user_pool_client" "pedidos_user_pool_client" {
   allowed_oauth_scopes            = ["phone", "email", "openid", "profile", "aws.cognito.signin.user.admin"]
   allowed_oauth_flows_user_pool_client = true
   callback_urls                   = ["https://github.com/queirozingrd"]
+  supported_identity_providers    = ["COGNITO"]
 }
 
 # Identity Pool
