@@ -16,13 +16,13 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
 
   alias_attributes = ["email", "phone_number"]
 
-  password_policy {
-    minimum_length    = 8
-    require_lowercase = true
-    require_numbers   = true
-    require_symbols   = false
-    require_uppercase = false
-  }
+  # password_policy {
+  #   minimum_length    = 8
+  #   require_lowercase = true
+  #   require_numbers   = true
+  #   require_symbols   = false
+  #   require_uppercase = false
+  # }
 
   username_configuration {
     case_sensitive = false
@@ -51,9 +51,9 @@ resource "aws_cognito_user_pool_client" "pedidos_user_pool_client" {
   generate_secret = false
 
   # OAuth Configuration
-  allowed_oauth_flows             = ["code", "implicit"]
-  allowed_oauth_scopes            = ["phone", "email", "openid", "profile", "aws.cognito.signin.user.admin"]
-  allowed_oauth_flows_user_pool_client = true
+  # allowed_oauth_flows             = ["code", "implicit"]
+  # allowed_oauth_scopes            = ["phone", "email", "openid", "profile", "aws.cognito.signin.user.admin"]
+  # allowed_oauth_flows_user_pool_client = true
   callback_urls                   = ["https://github.com/queirozingrd"]
   supported_identity_providers    = ["COGNITO"]
 }
