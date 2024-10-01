@@ -12,6 +12,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
   TF_STATE_BUCKET: ${{ secrets.TF_STATE_BUCKET }}
+  AWS_DEFAULT_REGION: us-east-1
 
 jobs:
   terraform:
@@ -26,12 +27,8 @@ jobs:
 
       - name: Initialize Terraform for Network
         working-directory: ./network
-        run: terraform init
-
-      - name: Plan Terraform changes for Network
-        working-directory: ./network
-        run: terraform plan -out=tfplan
+        run: terraform init -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=infra.tfstate" -backend-config="region=us-east-1"
 
       - name: Apply Terraform changes for Network
         working-directory: ./network
-        run: terraform apply -input=false tfplan
+        run: terraform destroy -auto-approve
