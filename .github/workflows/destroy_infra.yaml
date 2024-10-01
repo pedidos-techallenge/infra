@@ -1,4 +1,4 @@
-name: Deploy S3 with Terraform
+name: Destroy infra with Terraform
 
 on:
   push:
