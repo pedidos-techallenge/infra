@@ -3,7 +3,11 @@ provider "aws" {
 }
 
 terraform {
-  backend "s3" {}
+  backend "s3" {
+    bucket         = "bucket-tfstates-postech-fiap-6soat"
+    key            = "cognito.tfstate"
+    region         = "us-east-1"
+  }
 }
 
 data "aws_lambda_function" "application_entry" {
@@ -16,13 +20,9 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
 
   alias_attributes = ["email", "phone_number"]
 
-  # password_policy {
-  #   minimum_length    = 8
-  #   require_lowercase = true
-  #   require_numbers   = true
-  #   require_symbols   = false
-  #   require_uppercase = false
-  # }
+  password_policy {
+    minimum_length    = 8
+  }
 
   username_configuration {
     case_sensitive = false
@@ -50,11 +50,7 @@ resource "aws_cognito_user_pool_client" "pedidos_user_pool_client" {
   user_pool_id = aws_cognito_user_pool.pedidos_cognito.id
   generate_secret = false
 
-  # OAuth Configuration
-  # allowed_oauth_flows             = ["code", "implicit"]
-  # allowed_oauth_scopes            = ["phone", "email", "openid", "profile", "aws.cognito.signin.user.admin"]
-  # allowed_oauth_flows_user_pool_client = true
-  callback_urls                   = ["https://github.com/queirozingrd"]
+  callback_urls                   = ["/pedidos/application/cpf"]
   supported_identity_providers    = ["COGNITO"]
 }
 
