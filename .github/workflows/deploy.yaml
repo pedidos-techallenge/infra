@@ -42,7 +42,7 @@ jobs:
 
       - name: Initialize Terraform for Cognito
         working-directory: ./cognito
-        run: terraform init -backend-config="bucket=bucket-tfstates-postech-fiap-6soat" -backend-config="key=cognito.tfstate" -backend-config="region=us-east-1"
+        run: terraform init -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=cognito.tfstate" -backend-config="region=us-east-1"
 
       - name: Plan Terraform changes for Cognito
         working-directory: ./cognito

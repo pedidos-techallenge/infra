@@ -10,9 +10,10 @@ terraform {
   }
 }
 
-data "aws_lambda_function" "application_entry" {
-  function_name = "application_entry"
-}
+
+# data "aws_lambda_function" "application_entry" {
+#   function_name = "application_entry"
+# }
 
 # Create Cognito User Pool
 resource "aws_cognito_user_pool" "pedidos_cognito" {
@@ -34,9 +35,9 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
     default_email_option = "CONFIRM_WITH_CODE"
   }
 
-  lambda_config {
-    pre_authentication = data.aws_lambda_function.application_entry.arn
-  }
+  # lambda_config {
+  #   pre_authentication = data.aws_lambda_function.application_entry.arn
+  # }
 }
 
 resource "aws_cognito_user_pool_domain" "cognito_domain" {
