@@ -41,7 +41,7 @@ resource "aws_cognito_user_pool" "pedidos_cognito" {
 }
 
 resource "aws_cognito_user_pool_domain" "cognito_domain" {
-  domain       = "pos-tech-challenge"
+  domain       = "pos-tech-challenge-soat"
   user_pool_id = aws_cognito_user_pool.pedidos_cognito.id
 }
 
@@ -51,7 +51,7 @@ resource "aws_cognito_user_pool_client" "pedidos_user_pool_client" {
   user_pool_id = aws_cognito_user_pool.pedidos_cognito.id
   generate_secret = false
 
-  callback_urls                   = ["/pedidos/application/cpf"]
+  callback_urls                   = ["https://example.com"]
   supported_identity_providers    = ["COGNITO"]
 }
 
