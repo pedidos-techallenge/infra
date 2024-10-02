@@ -66,10 +66,14 @@ resource "aws_cognito_identity_pool" "pedidos_identity_pool" {
   }
 }
 
+data "aws_iam_role" "lab-role" {
+  name = "LabRole"
+}
+
 resource "aws_cognito_identity_pool_roles_attachment" "pedidos_identity_pool_roles" {
   identity_pool_id = aws_cognito_identity_pool.pedidos_identity_pool.id
 
   roles = {
-    authenticated = "arn:aws:iam::195169078299:role/LabRole"
+    authenticated = data.aws_iam_role.lab-role.arn
   }
 }
