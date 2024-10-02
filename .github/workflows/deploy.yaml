@@ -13,6 +13,9 @@ env:
   AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
   TF_STATE_BUCKET: ${{ secrets.TF_STATE_BUCKET }}
   AWS_DEFAULT_REGION: us-east-1
+  COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+  COGNITO_DOMAIN: ${{ secrets.COGNITO_DOMAIN }}
+  COGNITO_REDIRECT_URI: ${{ secrets.COGNITO_REDIRECT_URI }}
 
 jobs:
   terraform:
@@ -35,4 +38,16 @@ jobs:
 
       - name: Apply Terraform changes for Network
         working-directory: ./network
+        run: terraform apply -input=false tfplan
+
+      - name: Initialize Terraform for Cognito
+        working-directory: ./cognito
+        run: terraform init -backend-config="bucket=bucket-tfstates-postech-fiap-6soat" -backend-config="key=cognito.tfstate" -backend-config="region=us-east-1"
+
+      - name: Plan Terraform changes for Cognito
+        working-directory: ./cognito
+        run: terraform plan -out=tfplan
+
+      - name: Apply Terraform changes for Cognito
+        working-directory: ./cognito
         run: terraform apply -input=false tfplan
