@@ -90,3 +90,37 @@ output "sqs_main_queue_url" {
 output "sqs_dlq_queue_url" {
   value = aws_sqs_queue.payment_order_dlq.url
 }
+
+resource "aws_ecr_repository" "techchallenge_ecr" {
+  name                 = "techchallenge-ect"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+# Política de lifecycle para manter apenas as últimas 5 imagens
+resource "aws_ecr_lifecycle_policy" "techchallenge_ecr_policy" {
+  repository = aws_ecr_repository.techchallenge_ecr.name
+
+  policy = jsonencode({
+    rules = [{
+      rulePriority = 1
+      description  = "Keep last 5 images"
+      selection = {
+        tagStatus   = "any"
+        countType   = "imageCountMoreThan"
+        countNumber = 5
+      }
+      action = {
+        type = "expire"
+      }
+    }]
+  })
+}
+
+# Output para usar no GitHub Actions
+output "ecr_repository_url" {
+  value = aws_ecr_repository.techchallenge_ecr.repository_url
+}
