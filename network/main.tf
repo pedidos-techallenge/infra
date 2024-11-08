@@ -48,3 +48,45 @@ resource "aws_api_gateway_resource" "application_resource" {
   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
   path_part   = "pedidos"
 }
+
+# Filas SQS na AWS
+resource "aws_sqs_queue" "payment_order_dlq" {
+  name = "payment-order-dlq"
+
+  visibility_timeout_seconds = 30
+  message_retention_seconds = 1209600  # 14 dias
+  max_message_size         = 262144    # 256 KB
+  
+  tags = {
+    Environment = "development"
+    Purpose     = "DLQ for payment orders"
+  }
+}
+
+resource "aws_sqs_queue" "payment_order_main" {
+  name = "payment-order-main"
+  
+  visibility_timeout_seconds = 30
+  message_retention_seconds = 345600    # 4 dias
+  delay_seconds             = 0
+  max_message_size         = 262144    # 256 KB
+  
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.payment_order_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = {
+    Environment = "development"
+    Purpose     = "Main payment orders queue"
+  }
+}
+
+# Outputs para as filas
+output "sqs_main_queue_url" {
+  value = aws_sqs_queue.payment_order_main.url
+}
+
+output "sqs_dlq_queue_url" {
+  value = aws_sqs_queue.payment_order_dlq.url
+}
