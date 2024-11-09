@@ -92,7 +92,7 @@ output "sqs_dlq_queue_url" {
 }
 
 resource "aws_ecr_repository" "techchallenge_ecr" {
-  name                 = "techchallenge-ect"
+  name                 = "techchallenge-ecr"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
