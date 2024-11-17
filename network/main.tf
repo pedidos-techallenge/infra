@@ -94,7 +94,7 @@ resource "aws_sqs_queue" "payment_order_main" {
           "SQS:ReceiveMessage",
           "SQS:DeleteMessage"
         ]
-        Resource = "${aws_sqs_queue.payment_order_main.arn}"
+        Resource = "*"
       }
     ]
   })
