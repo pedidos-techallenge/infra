@@ -154,3 +154,26 @@ resource "aws_iam_user_policy_attachment" "attach_sqs_policy" {
   user       = "LabRole"  # Nome do seu usuário
   policy_arn = aws_iam_policy.sqs_policy.arn
 }
+
+# Política IAM para permitir a anexação de políticas a usuários IAM
+resource "aws_iam_policy" "iam_attach_policy" {
+  name        = "IamAttachPolicy"
+  description = "Política para permitir a anexação de políticas a usuários IAM"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = "iam:AttachUserPolicy"
+        Resource = "arn:aws:iam::014853897971:user/LabRole"
+      }
+    ]
+  })
+}
+
+# Associe a política ao usuário LabRole
+resource "aws_iam_user_policy_attachment" "attach_iam_attach_policy" {
+  user       = "LabRole"  # Nome do seu usuário
+  policy_arn = aws_iam_policy.iam_attach_policy.arn
+}
