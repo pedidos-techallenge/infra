@@ -80,6 +80,24 @@ resource "aws_sqs_queue" "payment_order_main" {
     Environment = "development"
     Purpose     = "Main payment orders queue"
   }
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = "*"
+        }
+        Action = [
+          "SQS:SendMessage",
+          "SQS:ReceiveMessage",
+          "SQS:DeleteMessage"
+        ]
+        Resource = "${aws_sqs_queue.payment_order_main.arn}"
+      }
+    ]
+  })
 }
 
 # Outputs para as filas
@@ -123,57 +141,4 @@ resource "aws_ecr_lifecycle_policy" "techchallenge_ecr_policy" {
 # Output para usar no GitHub Actions
 output "ecr_repository_url" {
   value = aws_ecr_repository.techchallenge_ecr.repository_url
-}
-
-# Política IAM para permitir ações SQS
-resource "aws_iam_policy" "sqs_policy" {
-  name        = "SqsPolicy"
-  description = "Política para permitir ações SQS"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "sqs:CreateQueue",
-          "sqs:SendMessage",
-          "sqs:ReceiveMessage",
-          "sqs:DeleteMessage",
-          "sqs:GetQueueAttributes",
-          "sqs:SetQueueAttributes"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-
-# Associe a política ao usuário LabRole
-resource "aws_iam_user_policy_attachment" "attach_sqs_policy" {
-  user       = "LabRole"  # Nome do seu usuário
-  policy_arn = aws_iam_policy.sqs_policy.arn
-}
-
-# Política IAM para permitir a anexação de políticas a usuários IAM
-resource "aws_iam_policy" "iam_attach_policy" {
-  name        = "IamAttachPolicy"
-  description = "Política para permitir a anexação de políticas a usuários IAM"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = "iam:AttachUserPolicy"
-        Resource = "arn:aws:iam::014853897971:user/LabRole"
-      }
-    ]
-  })
-}
-
-# Associe a política ao usuário LabRole
-resource "aws_iam_user_policy_attachment" "attach_iam_attach_policy" {
-  user       = "LabRole"  # Nome do seu usuário
-  policy_arn = aws_iam_policy.iam_attach_policy.arn
 }
