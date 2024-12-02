@@ -48,3 +48,97 @@ resource "aws_api_gateway_resource" "application_resource" {
   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
   path_part   = "pedidos"
 }
+
+# Filas SQS na AWS
+resource "aws_sqs_queue" "payment_order_dlq" {
+  name = "payment-order-dlq"
+
+  visibility_timeout_seconds = 30
+  message_retention_seconds = 1209600  # 14 dias
+  max_message_size         = 262144    # 256 KB
+  
+  tags = {
+    Environment = "development"
+    Purpose     = "DLQ for payment orders"
+  }
+}
+
+resource "aws_sqs_queue" "payment_order_main" {
+  name = "payment-order-main"
+  
+  visibility_timeout_seconds = 30
+  message_retention_seconds = 345600    # 4 dias
+  delay_seconds             = 0
+  max_message_size         = 262144    # 256 KB
+  
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.payment_order_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = {
+    Environment = "development"
+    Purpose     = "Main payment orders queue"
+  }
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = "*"
+        }
+        Action = [
+          "SQS:SendMessage",
+          "SQS:ReceiveMessage",
+          "SQS:DeleteMessage"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Outputs para as filas
+output "sqs_main_queue_url" {
+  value = aws_sqs_queue.payment_order_main.url
+}
+
+output "sqs_dlq_queue_url" {
+  value = aws_sqs_queue.payment_order_dlq.url
+}
+
+resource "aws_ecr_repository" "techchallenge_ecr" {
+  name                 = "techchallenge-ecr"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+# Política de lifecycle para manter apenas as últimas 5 imagens
+resource "aws_ecr_lifecycle_policy" "techchallenge_ecr_policy" {
+  repository = aws_ecr_repository.techchallenge_ecr.name
+
+  policy = jsonencode({
+    rules = [{
+      rulePriority = 1
+      description  = "Keep last 5 images"
+      selection = {
+        tagStatus   = "any"
+        countType   = "imageCountMoreThan"
+        countNumber = 5
+      }
+      action = {
+        type = "expire"
+      }
+    }]
+  })
+}
+
+# Output para usar no GitHub Actions
+output "ecr_repository_url" {
+  value = aws_ecr_repository.techchallenge_ecr.repository_url
+}
